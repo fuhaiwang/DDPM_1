@@ -132,16 +132,16 @@ class GaussianDiffusion(nn.Module):
         
         return diffusion_sequence
 
-    def perturb_x(self, x, t, noise):
+    def perturb_x(self, x, t, noise): # 类似于他人的 == q_sample() 函数
         return (
             extract(self.sqrt_alphas_cumprod, t, x.shape) * x +
             extract(self.sqrt_one_minus_alphas_cumprod, t, x.shape) * noise
         )   
 
-    def get_losses(self, x, t, y):
-        noise = torch.randn_like(x)
+    def get_losses(self, x, t, y): #
+        noise = torch.randn_like(x) # 噪声 高斯正态分布
 
-        perturbed_x = self.perturb_x(x, t, noise)
+        perturbed_x = self.perturb_x(x, t, noise) # t是均匀采样的batch个的数组。数值在0~T都有可能。
         estimated_noise = self.model(perturbed_x, t, y)
 
         if self.loss_type == "l1":
