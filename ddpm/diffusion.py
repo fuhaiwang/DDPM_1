@@ -58,7 +58,7 @@ class GaussianDiffusion(nn.Module):
             raise ValueError("__init__() got unknown loss type")
 
         self.loss_type = loss_type
-        self.num_timesteps = len(betas)
+        self.num_timesteps = len(betas) # The step of T, accroding to the len of betas. 
 
         alphas = 1.0 - betas
         alphas_cumprod = np.cumprod(alphas)
@@ -67,7 +67,7 @@ class GaussianDiffusion(nn.Module):
 
         self.register_buffer("betas", to_torch(betas))
         self.register_buffer("alphas", to_torch(alphas))
-        self.register_buffer("alphas_cumprod", to_torch(alphas_cumprod))
+        self.register_buffer("alphas_cumprod", to_torch(alphas_cumprod)) # 累乘
 
         self.register_buffer("sqrt_alphas_cumprod", to_torch(np.sqrt(alphas_cumprod)))
         self.register_buffer("sqrt_one_minus_alphas_cumprod", to_torch(np.sqrt(1 - alphas_cumprod)))
