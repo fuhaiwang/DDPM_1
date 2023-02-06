@@ -98,7 +98,7 @@ class GaussianDiffusion(nn.Module):
             )
 
     @torch.no_grad()
-    def sample(self, batch_size, device, y=None, use_ema=True):
+    def sample(self, batch_size, device, y=None, use_ema=True):  # 第二环节 采样过程 # Reverse Process
         if y is not None and batch_size != len(y):
             raise ValueError("sample batch size different from length of given y")
 
@@ -114,7 +114,7 @@ class GaussianDiffusion(nn.Module):
         return x.cpu().detach()
 
     @torch.no_grad()
-    def sample_diffusion_sequence(self, batch_size, device, y=None, use_ema=True):
+    def sample_diffusion_sequence(self, batch_size, device, y=None, use_ema=True):   # 
         if y is not None and batch_size != len(y):
             raise ValueError("sample batch size different from length of given y")
 
@@ -141,11 +141,11 @@ class GaussianDiffusion(nn.Module):
     def get_losses(self, x, t, y): #
         noise = torch.randn_like(x) # 噪声 高斯正态分布
 
-        perturbed_x = self.perturb_x(x, t, noise) # t是均匀采样的batch个的数组。数值在0~T都有可能。
-        estimated_noise = self.model(perturbed_x, t, y)
+        perturbed_x = self.perturb_x(x, t, noise) # t是均匀采样的batch个的数组。数值在0~T都有可能。 采样完的噪声输入给Unet网络，拟合每一步的噪声分布。
+        estimated_noise = self.model(perturbed_x, t, y)  #预测出来一个噪声
 
         if self.loss_type == "l1":
-            loss = F.l1_loss(estimated_noise, noise)
+            loss = F.l1_loss(estimated_noise, noise) # estimated_noise 和 实际的噪声noise做拟合。
         elif self.loss_type == "l2":
             loss = F.mse_loss(estimated_noise, noise)
 
